@@ -1,0 +1,61 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String   @id @default(uuid())
+  name          String?
+  email         String   @unique
+  password      String?
+  walletBalance Float    @default(100000.0) // Start with 100k paper trading money
+  createdAt     DateTime @default(now())
+
+  watchlists    Watchlist[]
+  holdings      Holding[]
+  researchLogs  ResearchLog[]
+}
+
+model Watchlist {
+  id          String   @id @default(uuid())
+  userId      String
+  companyName String?
+  ticker      String
+  addedAt     DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, ticker])
+}
+
+model Holding {
+  id          String   @id @default(uuid())
+  userId      String
+  companyName String?
+  ticker      String
+  shares      Float
+  avgBuyPrice Float
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, ticker])
+}
+
+model ResearchLog {
+  id          String   @id @default(uuid())
+  userId      String
+  companyName String?
+  ticker      String
+  verdict     String
+  confidence  Int
+  thesis      String
+  fullResult  String   // JSON stringified result
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
