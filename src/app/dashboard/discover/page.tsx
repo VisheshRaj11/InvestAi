@@ -17,7 +17,7 @@ export default function DiscoverPage() {
   };
 
   return (
-    <div className="w-full h-full p-4 lg:p-8">
+    <div className="w-full h-full p-4 lg:p-8 pb-10">
       <div className="max-w-6xl mx-auto space-y-8 pb-10">
         <div className="bg-gradient-to-br from-indigo-900 to-[#1A1A2E] rounded-3xl p-8 lg:p-12 text-white shadow-2xl relative overflow-hidden">
           <div className="relative z-10 max-w-2xl">

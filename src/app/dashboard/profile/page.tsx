@@ -42,7 +42,7 @@ export default function ProfilePage() {
           </div>
           
           <div className="mt-8 pt-8 border-t border-gray-100 flex justify-between items-center">
-            <Button variant="outline" className="border-gray-200 text-gray-600 hover:bg-gray-50" onClick={() => signOut()}>
+            <Button variant="outline" className="border-gray-200 text-gray-600 hover:bg-gray-50" onClick={() => signOut({ callbackUrl: "/" })}>
               <LogOut className="w-4 h-4 mr-2" /> Sign Out
             </Button>
           </div>

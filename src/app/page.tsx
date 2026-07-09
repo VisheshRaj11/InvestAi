@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowDown, ArrowLeft, Hexagon, Square, Cloud, Star, Circle, Settings, LayoutDashboard, Sparkles, Cpu, Target, ShieldAlert, ArrowUpRight, ChevronDown } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowLeft, Hexagon, Square, Cloud, Star, Circle, Settings, LayoutDashboard, Sparkles, Cpu, Target, ShieldAlert, ArrowUpRight, ChevronDown } from "lucide-react";
 
 export default function Home() {
   return (
@@ -46,9 +46,9 @@ export default function Home() {
           </p>
           
           <div className="mt-8">
-            <Link href="/dashboard">
-              <Button className="rounded-full bg-[#5B41CF] hover:bg-[#4A3B72] text-white px-8 py-6 text-lg shadow-xl shadow-purple-500/20">
-                Download Now <ArrowDown className="ml-2 h-5 w-5 inline-block" />
+            <Link href="/signup">
+              <Button className="rounded-full bg-[#5B41CF] hover:bg-[#4A3B72] text-white px-8 py-6 text-lg shadow-xl shadow-purple-500/20 cursor-pointer">
+                Get Started <ArrowRight className="ml-2 h-5 w-5 inline-block" />
               </Button>
             </Link>
           </div>

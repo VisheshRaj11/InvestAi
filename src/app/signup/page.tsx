@@ -4,22 +4,23 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Target, ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { RadialDotBackground } from "@/components/ui/radial-dot-background";
 import Link from "next/link";
 
-export default function LoginPage() {
-  const [email, setEmail] = useState("demo@investai.com");
-  const [password, setPassword] = useState("demo123");
+export default function SignupPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     
+    // In our test environment, next-auth credentials handles auto-signup
     const result = await signIn("credentials", {
       email,
       password,
@@ -27,10 +28,10 @@ export default function LoginPage() {
     });
     
     if (result?.error) {
-      toast.error("Login failed");
+      toast.error("Sign up failed");
       setLoading(false);
     } else {
-      toast.success("Welcome to InvestAI!");
+      toast.success("Account created successfully!");
       router.push("/dashboard");
     }
   };
@@ -45,10 +46,10 @@ export default function LoginPage() {
           </div>
         </div>
         
-        <h2 className="text-2xl font-bold text-center mb-2 text-[#2D235C]">Welcome to InvestAI</h2>
-        <p className="text-gray-500 text-center mb-8 text-sm">Sign in to access your investment dashboard.</p>
+        <h2 className="text-2xl font-bold text-center mb-2 text-[#2D235C]">Create an Account</h2>
+        <p className="text-gray-500 text-center mb-8 text-sm">Sign up to access your AI investment dashboard.</p>
         
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleSignup} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input 
@@ -56,7 +57,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-              placeholder="analyst@investai.com"
+              placeholder="you@example.com"
               required
             />
           </div>
@@ -69,19 +70,16 @@ export default function LoginPage() {
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
               placeholder="••••••••"
               required
+              minLength={6}
             />
           </div>
           <Button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-[#7B61FF] to-[#5B41CF] hover:opacity-90 text-white border-none shadow-md h-11 mt-2 rounded-xl font-medium cursor-pointer transition-all">
-            {loading ? <span className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Signing in...</span> : <span className="flex items-center gap-2">Sign In <ArrowRight className="w-4 h-4" /></span>}
+            {loading ? <span className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Creating account...</span> : <span className="flex items-center gap-2">Sign Up <ArrowRight className="w-4 h-4" /></span>}
           </Button>
         </form>
         
         <div className="mt-6 text-center text-sm text-gray-600">
-          Don't have an account? <Link href="/signup" className="text-[#5B41CF] hover:underline font-bold">Sign Up</Link>
-        </div>
-        
-        <div className="mt-4 text-center text-xs text-gray-400">
-          For testing: any email/password creates a new account automatically.
+          Already have an account? <Link href="/login" className="text-[#5B41CF] hover:underline font-bold">Sign In</Link>
         </div>
       </div>
     </div>

@@ -3,9 +3,10 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Sparkles, Target, Wallet, ShieldAlert, Check } from "lucide-react";
+import { ArrowLeft, Sparkles, Target, Wallet, ShieldAlert, Check, Loader2, ArrowUpRight } from "lucide-react";
 import { TrendChart } from "@/components/ui/trend-chart";
 import { AgentState } from "@/lib/agent/state";
+import { toast } from "sonner";
 
 export default function StockDetailPage() {
   const { ticker } = useParams();
@@ -100,10 +101,13 @@ export default function StockDetailPage() {
         })
       });
       const data = await res.json();
-      if (data.error) alert(data.error);
-      else alert(`Successfully ${action === 'buy' ? 'bought' : 'sold'} ${buyAmount} shares of ${ticker}!`);
+      if (data.error) {
+        toast.error(data.error);
+      } else {
+        toast.success(`Successfully ${action === 'buy' ? 'bought' : 'sold'} ${buyAmount} shares of ${ticker}!`);
+      }
     } catch (e) {
-      alert("Transaction failed");
+      toast.error("Transaction failed");
     }
     setActionLoading(false);
   };
@@ -115,9 +119,9 @@ export default function StockDetailPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ticker, companyName: state?.companyName || ticker, action: "add" })
       });
-      alert("Added to watchlist!");
+      toast.success("Added to watchlist!");
     } catch (e) {
-      alert("Failed to add to watchlist");
+      toast.error("Failed to add to watchlist");
     }
   };
 
@@ -128,7 +132,7 @@ export default function StockDetailPage() {
     <div className="w-full h-full bg-[#F8F9FA] overflow-y-auto">
       <div className="bg-white border-b border-gray-200 p-4 sticky top-0 z-20 shadow-sm flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <button onClick={() => router.back()} className="p-2 hover:bg-gray-100 rounded-full"><ArrowLeft className="w-5 h-5" /></button>
+          <button onClick={() => router.back()} className="p-2 hover:bg-gray-100 rounded-full cursor-pointer"><ArrowLeft className="w-5 h-5" /></button>
           <div className="font-bold text-xl">{ticker}</div>
           {(state as any)?.isCached && (
             <div className="ml-2 flex items-center gap-3">
@@ -137,7 +141,7 @@ export default function StockDetailPage() {
               </span>
               <button 
                 onClick={() => runAnalysis(ticker as string, true)}
-                className="text-xs text-blue-600 hover:underline font-medium"
+                className="text-xs text-blue-600 hover:underline font-medium cursor-pointer"
               >
                 Re-run
               </button>
@@ -150,50 +154,10 @@ export default function StockDetailPage() {
         {statusMsg && <div className="text-blue-600 font-medium flex items-center justify-center p-3 bg-blue-50 rounded-lg border border-blue-100">{statusMsg}</div>}
         
         {loading ? (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-pulse">
-            {/* Skeleton Left Column */}
-            <div className="lg:col-span-4 space-y-6">
-              <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
-                  <div className="w-20 h-6 bg-gray-200 rounded-full"></div>
-                </div>
-                <div className="w-3/4 h-8 bg-gray-200 rounded mb-2"></div>
-                <div className="w-1/2 h-10 bg-gray-200 rounded mb-6"></div>
-                <div className="space-y-4 border-t border-gray-100 pt-6">
-                  <div className="w-full h-10 bg-gray-200 rounded-lg"></div>
-                  <div className="w-full h-10 bg-gray-200 rounded-lg"></div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Skeleton Right Column */}
-            <div className="lg:col-span-8 space-y-6">
-              <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-4">
-                <div className="w-1/3 h-6 bg-gray-200 rounded"></div>
-                <div className="w-full h-4 bg-gray-200 rounded"></div>
-                <div className="w-5/6 h-4 bg-gray-200 rounded"></div>
-                <div className="w-4/6 h-4 bg-gray-200 rounded"></div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-3">
-                  <div className="w-1/2 h-6 bg-gray-200 rounded mb-4"></div>
-                  <div className="w-full h-4 bg-gray-200 rounded"></div>
-                  <div className="w-5/6 h-4 bg-gray-200 rounded"></div>
-                </div>
-                <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-3">
-                  <div className="w-1/2 h-6 bg-gray-200 rounded mb-4"></div>
-                  <div className="w-full h-4 bg-gray-200 rounded"></div>
-                  <div className="w-5/6 h-4 bg-gray-200 rounded"></div>
-                </div>
-              </div>
-              <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-4">
-                <div className="w-1/4 h-6 bg-gray-200 rounded mb-4"></div>
-                <div className="w-full h-12 bg-gray-100 rounded"></div>
-                <div className="w-full h-12 bg-gray-100 rounded"></div>
-                <div className="w-full h-12 bg-gray-100 rounded"></div>
-              </div>
-            </div>
+          <div className="flex flex-col items-center justify-center py-32 bg-white rounded-2xl border border-gray-100 shadow-sm">
+            <Loader2 className="w-12 h-12 text-black animate-spin mb-4" />
+            <div className="text-xl font-bold text-gray-800">Agent Researching...</div>
+            <div className="text-sm text-gray-500 mt-2">Analyzing real-time financial data and news.</div>
           </div>
         ) : error ? (
           <div className="p-8 text-center text-red-500 font-bold">{error}</div>
@@ -201,7 +165,7 @@ export default function StockDetailPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
             {/* Left Column: Price & Actions */}
-            <div className="lg:col-span-4 space-y-6">
+            <div className="lg:col-span-3 space-y-6">
               <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
                 <div className="flex justify-between items-start mb-4">
                   <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center font-bold text-xl text-white">{String(ticker)[0]}</div>
@@ -217,19 +181,45 @@ export default function StockDetailPage() {
                     <input type="number" min="1" value={buyAmount} onChange={(e) => setBuyAmount(parseInt(e.target.value) || 1)} className="w-20 px-3 py-2 border border-gray-200 rounded-lg focus:ring-black" />
                     <span className="text-sm text-gray-500">Shares</span>
                   </div>
-                  <div className="flex gap-3">
-                    <Button onClick={() => handleTransaction('buy')} disabled={actionLoading} className="flex-1 bg-black text-white hover:bg-gray-800 rounded-lg">Buy</Button>
-                    <Button onClick={() => handleTransaction('sell')} disabled={actionLoading} variant="outline" className="flex-1 rounded-lg">Sell</Button>
+                  <div className="flex flex-col xl:flex-row gap-3">
+                    <Button onClick={() => handleTransaction('buy')} disabled={actionLoading} className="flex-1 bg-black text-white hover:bg-gray-800 rounded-lg">
+                      {actionLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null} Buy
+                    </Button>
+                    <Button onClick={() => handleTransaction('sell')} disabled={actionLoading} variant="outline" className="flex-1 rounded-lg">
+                      {actionLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null} Sell
+                    </Button>
                   </div>
                   <Button onClick={handleWatchlist} variant="outline" className="w-full rounded-lg text-gray-600 border-dashed border-gray-300">
                     Add to Watchlist
                   </Button>
                 </div>
               </div>
+              
+              <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+                <h3 className="font-bold text-lg mb-4 text-gray-800">Trade on Platform</h3>
+                <div className="space-y-3">
+                  <a href={`https://kite.zerodha.com/chart/web/tvc/NSE/${ticker}`} target="_blank" className="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:border-black hover:bg-gray-50 transition-colors group">
+                    <span className="font-medium text-sm text-gray-700 group-hover:text-black">Zerodha Kite</span>
+                    <ArrowUpRight className="w-4 h-4 text-gray-400 group-hover:text-black transition-colors" />
+                  </a>
+                  <a href={`https://groww.in/stocks/${String(ticker).toLowerCase()}`} target="_blank" className="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:border-black hover:bg-gray-50 transition-colors group">
+                    <span className="font-medium text-sm text-gray-700 group-hover:text-black">Groww</span>
+                    <ArrowUpRight className="w-4 h-4 text-gray-400 group-hover:text-black transition-colors" />
+                  </a>
+                  <a href={`https://indmoney.com/stocks/${String(ticker).toLowerCase()}`} target="_blank" className="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:border-black hover:bg-gray-50 transition-colors group">
+                    <span className="font-medium text-sm text-gray-700 group-hover:text-black">INDmoney</span>
+                    <ArrowUpRight className="w-4 h-4 text-gray-400 group-hover:text-black transition-colors" />
+                  </a>
+                  <a href={`https://pro.upstox.com/`} target="_blank" className="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:border-black hover:bg-gray-50 transition-colors group">
+                    <span className="font-medium text-sm text-gray-700 group-hover:text-black">Upstox</span>
+                    <ArrowUpRight className="w-4 h-4 text-gray-400 group-hover:text-black transition-colors" />
+                  </a>
+                </div>
+              </div>
             </div>
 
             {/* Right Column: AI Analysis */}
-            <div className="lg:col-span-8 space-y-6">
+            <div className="lg:col-span-9 space-y-6">
               
               {/* Historical Price Chart */}
               {state?.researchData?.[ticker as string]?.history && (
@@ -243,11 +233,11 @@ export default function StockDetailPage() {
 
               {/* Key Metrics */}
               {d?.key_metrics && d.key_metrics.length > 0 && (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 lg:gap-4">
                   {d.key_metrics.map((m: any, i: number) => (
-                    <div key={i} className="bg-white rounded-2xl p-4 border border-gray-200 shadow-sm flex flex-col justify-center text-center">
-                      <div className="text-xs text-gray-500 uppercase tracking-wide font-bold mb-1">{m.label}</div>
-                      <div className="text-lg font-black">{m.value}</div>
+                    <div key={i} className="bg-white rounded-2xl p-4 lg:p-6 border border-gray-200 shadow-sm flex flex-col justify-center text-center overflow-hidden">
+                      <div className="text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1 truncate" title={m.label}>{m.label}</div>
+                      <div className="text-lg font-bold truncate" title={m.value}>{m.value}</div>
                     </div>
                   ))}
                 </div>

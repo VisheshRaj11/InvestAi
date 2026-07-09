@@ -6,17 +6,17 @@ import { useRouter } from "next/navigation";
 import { AreaChart, Area, ResponsiveContainer, YAxis } from "recharts";
 
 const Sparkline = ({ data, positive }: { data: any[], positive: boolean }) => (
-  <div className="h-12 w-full mt-4 opacity-50 group-hover:opacity-100 transition-opacity">
+  <div className="h-24 w-full mt-4 opacity-50 group-hover:opacity-100 transition-opacity">
     <ResponsiveContainer width="100%" height="100%">
       <AreaChart data={data}>
         <YAxis domain={['dataMin', 'dataMax']} hide />
         <Area 
           type="monotone" 
           dataKey="price" 
-          stroke="black" 
-          fill="black" 
-          fillOpacity={0.05} 
-          strokeWidth={1.5}
+          stroke={positive ? "#16a34a" : "#dc2626"} 
+          fill={positive ? "#16a34a" : "#dc2626"} 
+          fillOpacity={0.08} 
+          strokeWidth={3}
         />
       </AreaChart>
     </ResponsiveContainer>
@@ -77,30 +77,45 @@ export default function DashboardPage() {
         {loadingTrending ? (
           <div className="space-y-4">
             <h2 className="text-xl font-bold flex items-center gap-2 text-gray-800"><TrendingUp className="w-5 h-5" /> Market Leaders</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(i => <div key={i} className="bg-white rounded-3xl h-36 border border-gray-200 animate-pulse"></div>)}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="bg-white rounded-[2rem] h-[340px] border border-gray-200 animate-pulse"></div>)}
             </div>
           </div>
         ) : trendingStocks.length > 0 && (
           <div className="space-y-4">
             <h2 className="text-xl font-bold flex items-center gap-2 text-gray-800"><TrendingUp className="w-5 h-5" /> Market Leaders</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {trendingStocks.map((stock, i) => {
                 const isPositive = stock.change >= 0;
                 return (
-                  <div key={i} onClick={() => router.push(`/dashboard/stocks/${stock.ticker}`)} className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md hover:border-purple-300 cursor-pointer transition-all duration-300 flex flex-col justify-between h-36">
-                    <div className="flex justify-between items-start">
+                  <div key={i} onClick={() => router.push(`/dashboard/stocks/${stock.ticker}`)} className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm hover:shadow-[0_8px_40px_-12px_rgba(168,85,247,0.3)] hover:border-purple-200 cursor-pointer transition-all duration-300 flex flex-col justify-between group min-h-[340px] relative overflow-hidden">
+                    <div className="flex justify-between items-center w-full gap-4">
+                      <div className="h-10 px-4 rounded-xl bg-black flex items-center text-white font-medium text-sm shadow-sm truncate flex-1 max-w-fit">
+                        <span className="truncate">{stock.companyName}</span>
+                      </div>
+                      <div className={`text-sm font-semibold px-4 py-2 rounded-full whitespace-nowrap shrink-0 ${isPositive ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                        {isPositive ? '▲' : '▼'} {Math.abs(stock.changePercent || 0).toFixed(2)}%
+                      </div>
+                    </div>
+                    
+                    <div className="mt-6">
+                      <div className="font-bold text-3xl text-gray-900 tracking-tight">{stock.ticker}</div>
+                    </div>
+                    
+                    <div className="mt-6 flex items-end justify-between z-10 relative">
                       <div>
-                        <div className="font-medium text-xl text-gray-800">{stock.ticker}</div>
-                        <div className="text-xs text-gray-400 font-normal truncate max-w-[140px]">{stock.companyName}</div>
-                      </div>
-                      <div className={`text-xs font-medium px-2 py-1 rounded-md ${isPositive ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
-                        {isPositive ? '+' : ''}{stock.changePercent?.toFixed(2)}%
+                        <div className="text-sm text-gray-400 font-medium mb-1">Current Price</div>
+                        <div className="text-3xl font-bold text-gray-900">${stock.price?.toFixed(2) || "0.00"}</div>
                       </div>
                     </div>
-                    <div className="flex items-end justify-between mt-2">
-                      <div className="text-2xl font-medium text-gray-800">${stock.price?.toFixed(2) || "0.00"}</div>
+
+                    <div className="absolute inset-x-0 bottom-24 pointer-events-none opacity-40 group-hover:opacity-100 transition-opacity duration-500">
+                      <Sparkline data={dummyChartData} positive={isPositive} />
                     </div>
+
+                    <button className="w-full bg-gray-50 text-gray-700 border border-gray-100 group-hover:bg-black group-hover:text-white group-hover:border-black rounded-xl py-4 mt-8 text-center font-semibold text-sm transition-colors duration-300 flex justify-center items-center gap-2 z-10">
+                      See Analysis <ChevronRight className="w-5 h-5" />
+                    </button>
                   </div>
                 );
               })}
