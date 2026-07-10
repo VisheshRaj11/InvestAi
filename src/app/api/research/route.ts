@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
           
           for await (const chunk of streamIt) {
             const nodeName = Object.keys(chunk)[0];
-            const stateUpdate = chunk[nodeName];
+            const stateUpdate = (chunk as any)[nodeName];
             
             finalState = { ...finalState, ...stateUpdate };
             
