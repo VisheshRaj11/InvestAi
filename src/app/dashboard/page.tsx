@@ -39,10 +39,20 @@ export default function DashboardPage() {
     fetch('/api/watchlist').then(r => r.json()).then(d => { setWatchlist(d); setLoadingWatchlist(false); }).catch(() => { setLoadingWatchlist(false); });
   }, []);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim().length > 0) {
-      router.push(`/dashboard/stocks/${query.toUpperCase()}`);
+      try {
+        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        if (data && data.length > 0 && data[0].symbol) {
+          router.push(`/dashboard/stocks/${data[0].symbol.toUpperCase()}`);
+        } else {
+          router.push(`/dashboard/stocks/${query.toUpperCase()}`);
+        }
+      } catch (err) {
+        router.push(`/dashboard/stocks/${query.toUpperCase()}`);
+      }
     }
   };
 
