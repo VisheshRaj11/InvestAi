@@ -133,7 +133,7 @@ export default function StockDetailPage() {
       <div className="bg-white border-b border-gray-200 p-4 sticky top-0 z-20 shadow-sm flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button onClick={() => router.back()} className="p-2 hover:bg-gray-100 rounded-full cursor-pointer"><ArrowLeft className="w-5 h-5" /></button>
-          <div className="font-bold text-xl">{ticker}</div>
+          <div className="font-bold text-xl">{state?.companyName || ticker}</div>
           {(state as any)?.isCached && (
             <div className="ml-2 flex items-center gap-3">
               <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded font-medium">
