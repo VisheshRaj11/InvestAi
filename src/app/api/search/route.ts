@@ -2,6 +2,8 @@ import { NextRequest } from "next/server";
 import YahooFinance from "yahoo-finance2";
 const yahooFinance = new YahooFinance();
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const q = searchParams.get("q");

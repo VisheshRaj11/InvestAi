@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextRequest } from "next/server";
 import { agentGraph } from "@/lib/agent/graph";
 import { getServerSession } from "next-auth";
