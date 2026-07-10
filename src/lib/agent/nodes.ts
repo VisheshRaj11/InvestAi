@@ -99,8 +99,8 @@ ${context}
 
   // Some versions of LangChain or the LLM itself wrap the output in the name provided or a generic key.
   let finalDecision = response;
-  if (response?.decision_report) finalDecision = response.decision_report;
-  else if (response?.decision) finalDecision = response.decision;
+  if ((response as any)?.decision_report) finalDecision = (response as any).decision_report;
+  else if ((response as any)?.decision) finalDecision = (response as any).decision;
 
   return {
     decision: finalDecision

@@ -226,7 +226,7 @@ export default function StockDetailPage() {
                 <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm h-80">
                   <h3 className="font-bold text-xl mb-4 flex items-center gap-2">Historical Performance (1Y)</h3>
                   <div className="h-[220px]">
-                     <TrendChart data={state.researchData[ticker as string].history} />
+                     <TrendChart data={(state.researchData[ticker as string].history || []) as any} />
                   </div>
                 </div>
               )}

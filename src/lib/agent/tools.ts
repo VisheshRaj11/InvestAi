@@ -35,8 +35,8 @@ export async function getHistoricalData(ticker: string, period: "1W" | "1M" | "1
       interval: period === "1W" ? "1d" : period === "1M" ? "1d" : "1wk" as const,
     };
     
-    const result = await yahooFinance.chart(ticker, queryOptions);
-    return result?.quotes ? result.quotes.map((r: any) => ({ date: r.date.toISOString(), close: r.close })) : [];
+    const result = await yahooFinance.chart(ticker, queryOptions as any);
+    return (result as any)?.quotes ? (result as any).quotes.map((r: any) => ({ date: r.date.toISOString(), close: r.close })) : [];
   } catch (error) {
     console.error(`Error fetching historical data for ${ticker}:`, error);
     return [];
